@@ -2,7 +2,7 @@
 const express = require("express");
 const cors = require("cors");
 const app = express();
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 //This is very very important to connect database for secure pass and user
 require("dotenv").config();
 
@@ -27,29 +27,40 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     const makeupCollection = client.db("makeupArtist").collection("services");
-
+    const makeupLimitData = client.db("makeupArtist").collection("setlimit");
+// Get all services data
     app.get("/services", async (req, res) => {
       const query = {};
       const cursor = makeupCollection.find(query);
       const services = await cursor.toArray();
       res.send(services);
     });
+// Set id for specific id 
+app.get('/services/:id', async (req, res) => {
+  const id = req.params.id;
+  const query = { _id: ObjectId(id) };
+  const service = await makeupCollection.findOne(query);
+  res.send(service);
+});
 
-    // app.get('/data', async (req, res) => {
-    //     const user = {
-    //         title: "Assalamu alaikum.",
-    //         name: "Farhana Yesmin",
-    //         img: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.allrecipes.com%2Frecipe%2F240469%2Fisaacs-carrot-cake%2F&psig=AOvVaw30E2pgKJF_5cnVxFSIRwsx&ust=1668056788169000&source=images&cd=vfe&ved=0CA0QjRxqFwoTCIjDqfWpoPsCFQAAAAAdAAAAABAE"
-    //     }
 
-    //     const results = await makeupCollection.insertOne(user);
-    //     res.send(results);
-    // })
+
+
+
+    // Set limit services data
+    app.get("/setlimit", async (req, res) => {
+      const query = {};
+      const cursor = makeupLimitData.find(query);
+      const limit = await cursor.toArray();
+      res.send(limit);
+    });
+
+    
   } finally {
   }
 }
 run().catch((err) => {
-  console.error(err.name.bg - red, err.message.bold);
+  console.error(err.name.bg-red, err.message.bold);
 });
 
 app.get("/", (req, res) => {
@@ -60,42 +71,3 @@ app.listen(port, () => {
   console.log(`Makeup Artist runing on ${port}`);
 });
 
-// const express = require('express');
-// const cors = require('cors');
-
-// require('dotenv').config();
-// const app = express();
-// const port = process.env.PORT || 5000;
-// // middle wares
-// app.use(cors());
-// app.use(express.json());
-
-// //console.log(uri);
-
-// async function run() {
-//     try {
-//         const serviceCollection = client.db('makeupService').collection('services');
-
-//         app.get('/services', async (req, res) => {
-//             const query = {}
-//             const cursor = serviceCollection.find(query);
-//             const services = await cursor.toArray();
-//             res.send(services);
-//         });
-
-//     }
-//     finally {
-
-//     }
-
-// }
-
-// run().catch(err => console.error(err));
-
-// app.get('/', (req, res) => {
-//     res.send('Makeup server is running')
-// })
-
-// app.listen(port, () => {
-//     console.log(`Makeup server running on ${port}`);
-// })
