@@ -42,10 +42,13 @@ app.get('/services/:id', async (req, res) => {
   const service = await makeupCollection.findOne(query);
   res.send(service);
 });
+// For the post data
 
-
-
-
+app.post('/addservice', async (req, res) => {
+  const addservice = req.body;
+  const result = await makeupCollection.insertOne(addservice);
+  res.send(result);
+});
 
     // Set limit services data
     app.get("/setlimit", async (req, res) => {
