@@ -28,6 +28,7 @@ async function run() {
   try {
     const makeupCollection = client.db("makeupArtist").collection("services");
     const makeupLimitData = client.db("makeupArtist").collection("setlimit");
+    const reviewsData = client.db("makeupArtist").collection("reviews");
 // Get all services data
     app.get("/services", async (req, res) => {
       const query = {};
@@ -35,6 +36,7 @@ async function run() {
       const services = await cursor.toArray();
       res.send(services);
     });
+
 // Set id for specific id 
 app.get('/services/:id', async (req, res) => {
   const id = req.params.id;
@@ -42,6 +44,28 @@ app.get('/services/:id', async (req, res) => {
   const service = await makeupCollection.findOne(query);
   res.send(service);
 });
+// // Set id for specific id
+// app.get('/setlimit/:id', async (req, res) => {
+//   const id = req.params.id;
+//   const query = { _id: ObjectId(id) };
+//   const limit = await makeupLimitData.findOne(query);
+//   res.send( limit);
+// });
+    app.post('/reviews', async (req, res) => {
+      const reviews = req.body;
+      const results = await reviewsData.insertOne(reviews);
+      res.send(results);
+} )
+
+    // For get the reviews
+      app.get('/reviews', async (req, res) => {
+        const query = {};
+        const cursor = reviewsData.find(query);
+        const review = await cursor.toArray();
+        res.send(review);
+      });
+  
+    
 // For the post data
 
 app.post('/addservice', async (req, res) => {
